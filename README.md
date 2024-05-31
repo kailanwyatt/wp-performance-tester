@@ -1,4 +1,4 @@
-# wp-performance-tester# WP Performance Tester
+# WP Performance Tester
 
 WP Performance Tester is a WordPress plugin that allows you to test the performance impact of your plugins on your site. It measures the time it takes to load your site with each plugin deactivated one by one.
 
