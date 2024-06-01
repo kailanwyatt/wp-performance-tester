@@ -81,11 +81,6 @@ class WP_Performance_Tester {
 		$test_time            = date( 'Y-m-d H:i:s' );
 		$start_time           = isset( $_REQUEST['start_time'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['start_time'] ) ) : '';
 		$plugin_to_deactivate = isset( $_REQUEST['plugin'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ) ) : '';
-		$security             = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : '';
-
-		if ( ! wp_verify_nonce( $security, 'wp_performance_tester' ) ) {
-			wp_send_json_error( 'Invalid security token' );
-		}
 
 		$use_logging = isset( $_REQUEST['use_logging'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['use_logging'] ) ) : false;
 
@@ -98,9 +93,9 @@ class WP_Performance_Tester {
 
 		if ( $use_logging ) {
 			error_log( $test_time . ' :: ' . $plugin_to_deactivate . ' - ' . $formatted_time );
-		} else {
-			do_action( 'wp_performance_tester', $test_time, $plugin_to_deactivate, $formatted_time );
 		}
+
+		do_action( 'wp_performance_tester', $test_time, $plugin_to_deactivate, $formatted_time );
 
 		wp_send_json_success(
 			array(
@@ -118,11 +113,6 @@ class WP_Performance_Tester {
 	 */
 	public function filter_active_plugins_for_specific_ajax( $active_plugins ) {
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
-			return $active_plugins;
-		}
-
-		// Verify nonce.
-		if ( ! isset( $_REQUEST['security'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['security'] ), 'wp_performance_tester' ) ) ) {
 			return $active_plugins;
 		}
 
@@ -175,7 +165,7 @@ class WP_Performance_Tester {
 		// Get all active plugins.
 		$active_plugins = get_option( 'active_plugins' );
 
-		$use_logging = isset( $assoc_args['use_logging'] ) ? $assoc_args['use_logging'] : false;
+		$use_logging = isset( $assoc_args['use_logging'] ) ? filter_var( $assoc_args['use_logging'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		$minimum_required_plugins       = isset( $assoc_args['minimum_required_plugins'] ) ? explode( ',', $assoc_args['minimum_required_plugins'] ) : array();
 		$this->minimum_required_plugins = $minimum_required_plugins;
@@ -213,6 +203,9 @@ class WP_Performance_Tester {
 				$response_data = json_decode( $response_body, true );
 				if ( isset( $response_data['success'] ) && $response_data['success'] ) {
 					$plugin_times[ $plugin ] = floatval( $response_data['data']['time'] );
+					if ( ! $use_logging ) {
+						WP_CLI::log( "$plugin - " . $response_data['data']['time'] );
+					}
 				}
 			}
 		}

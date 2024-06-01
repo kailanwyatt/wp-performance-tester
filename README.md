@@ -5,8 +5,7 @@ WP Performance Tester is a WordPress plugin that allows you to test the performa
 ## Installation
 
 1. Download the `wp-performance-tester` folder.
-2. Upload the `wp-performance-tester` folder to your `mu-plugins` directory in the `wp-content` directory.
-3. Activate the plugin through the 'Must Use Plugins' menu in WordPress.
+2. Upload the `wp-performance-tester.php` file to your `mu-plugins` directory in the `wp-content` directory.
 
 ## Usage
 
@@ -21,7 +20,7 @@ wp performance_tester
 To run a performance test for a specific plugin, use the following command:
 
 ```
-wp wp-performance-tester --plugin=plugin-folder/plugin-file.php
+wp performance_tester --plugin=plugin-folder/plugin-file.php
 ```
 
 Replace plugin-folder/plugin-file.php with the folder and file name of the plugin you want to test.
@@ -30,10 +29,10 @@ Replace plugin-folder/plugin-file.php with the folder and file name of the plugi
 ### use_logging
 The use_logging flag allows you to log the performance test results to the error log.
 
-To use logging, add the --use_logging flag to your command:
+To use logging, add the `--use_logging` flag to your command:
 
 ```
-wp wp-performance-tester --use_logging
+wp performance_tester --use_logging
 ```
 
 When this flag is used, the results will be logged with the timestamp, plugin name, and elapsed time in seconds and milliseconds.
@@ -44,7 +43,7 @@ The minimum_required_plugins flag allows you to specify plugins that should neve
 To specify minimum required plugins, use the --minimum_required_plugins flag with a comma-separated list of plugins:
 
 ```
-wp wp-performance-tester --minimum_required_plugins=plugin-folder/plugin-file.php,another-plugin-folder/another-plugin-file.php
+wp performance_tester --minimum_required_plugins=plugin-folder/plugin-file.php,another-plugin-folder/another-plugin-file.php
 ```
 
 Replace the values with the folder and file names of the plugins you want to include as minimum required plugins.
